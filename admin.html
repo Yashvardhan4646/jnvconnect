@@ -562,6 +562,31 @@
         flex-direction: column;
         width: 100%;
     }
+    .notice{
+        background: #ffdddd;
+        color: #a94442;
+        height:100%;
+        width:100%;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        padding: 15px 20px;
+        align-items: center;
+        text-align: center;
+        font-weight: 600;
+        position: absolute;
+        z-index: 1000;
+    }
+    .notice button{
+        margin-top: 15px;
+        padding: 10px 20px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
 
         /* Responsive */
         @media (max-width: 992px) {
@@ -702,6 +727,10 @@
 </head>
 <body>
     <div class="admin-container">
+        <div class="notice">
+            <p>⚠️ This is a demo admin panel. Data may be reset periodically. Do not store sensitive information here. ⚠️</p>
+            <button>Undertood</button>
+        </div>
         <div class="bg"></div>
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -789,7 +818,9 @@
             <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
             
             <div class="header">
+                <marquee>Welcome to JNVconnect</marquee>
                 <div>
+                    
                     <h1 id="companyname"> Welcome To JNVconnect</h1>
                     <p>Made By Yashvardhan with ❤</p>
                 </div>
@@ -1445,6 +1476,12 @@
             };
             return new Date(dateString).toLocaleDateString('en-US', options);
         }
+        //notice board
+        const noticeBoard = document.querySelector('.notice');
+        const noticeButton = document.querySelector('.notice button');
+        noticeButton.addEventListener('click', () => {
+            noticeBoard.style.display = 'none';
+        });
     </script>
 </body>
 </html>
