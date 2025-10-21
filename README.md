@@ -1,29 +1,7 @@
-# JNVconnect — Updated Project
+# JNVconnect — Polished Morph UI
+Files updated: index.html, home.html. This version focuses on a playful morphism UI with working Firebase-backed posts, events, and users. 
+- Posts support image URLs, tags, create/edit/delete, real-time updates.
+- Presence writes simple online status for current user.
+- Theme toggle and playful background.
 
-This project was updated to convert the original `admin.html` into a Discord-style **community dashboard** (`home.html`) and clean up the login flow.
-
-## What I changed
-- `admin.html` -> **renamed to** `home.html` (main community dashboard)
-- `index.html` -> updated sign-in flow to redirect to `home.html`
-- `sitemap.xml` and `robots.txt` updated to reference `home.html`
-- `README.md` updated with this changelog
-
-## Features in `home.html`
-- Real-time **community feed** (posts) using Firebase Realtime Database (`posts` node).
-- **User presence** (status: online / idle / dnd / offline) synced to `users` node with `onDisconnect` support.
-- **Events / Announcements** panel reading from `events` node.
-- **Notifications** as toasts.
-- **Theme toggle** (dark/light) persisted to `localStorage`.
-- Create / edit / delete posts (image URL supported).
-- Single-file, in-page UI — drop into your hosting and it should work with your current Firebase config.
-
-## How to use
-1. Keep your Firebase config in the files (already included). If you'd like to replace it with placeholders, remove the config lines in `home.html` and `index.html`.
-2. Deploy files to your static host (Netlify, Vercel). Ensure your Realtime Database rules allow read/write as appropriate for your use-case.
-3. Posts are saved under `posts`, users under `users`, events under `events` in your Realtime DB.
-
-## Next steps (optional)
-- Add Firebase Storage for image uploads instead of URLs.
-- Add moderation/roles and better auth gating for editing/deleting posts.
-- Improve mobile UX (sidebar collapse animations) and add lazy-loading older posts.
-
+Deploy: upload all files to your static host. Ensure Realtime Database rules allow read/write for testing or set auth properly.
