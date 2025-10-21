@@ -9,19 +9,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root{
-      --primary: #ffb3ba;        /* Light Pink */
---primary-light: #ffdfba;  /* Peach */
---secondary: #bae1ff;      /* Baby Blue */
---success: #baffc9;        /* Minty Green */
---danger: #ffbaba;         /* Soft Red */
---warning: #ffffba;        /* Pale Yellow */
---light: #ffffff;
---dark: #6a5d7b;           /* Dusty Purple */
---gray: #e4e4e4;
---light-gray: #fdf1f1;
+        :root {
+  --color-primary: #6C63FF;   /* indigo neon */
+  --color-secondary: #FF6584; /* pink glow */
+  --color-accent: #00D4FF;    /* cyan light */
+  --color-bg: #0B0E16;
+  --color-surface: #141A29;
+  --color-text: #F0F3FA;
+  --color-muted: #9AA0B2;
+  --color-border: rgba(255,255,255,0.1);
+  --shadow: 0 4px 16px rgba(0,0,0,0.6);
 
-        }
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
 
 
         * {
@@ -581,11 +583,15 @@
         margin-top: 15px;
         padding: 10px 20px;
         border: none;
-        background: var(--primary);
+        background: #a94442;
         color: white;
         border-radius: 5px;
         cursor: pointer;
         transition: all 0.3s;
+    }
+    .notice button:hover{
+        background:#db413f;
+        transform: scale(1.05);
     }
 
         /* Responsive */
