@@ -1,461 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JNV Connect | Network for Navodaya Students</title>
-<meta name="description" content="A student-made platform for Navodaya Vidyalaya students to connect, collaborate, and share resources.">
-<meta name="keywords" content="JNV, Navodaya, JNV Students, JNV Connect, Navodaya Network, Jawahar Navodaya Vidyalaya">
-<meta name="robots" content="index, follow">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <meta property="og:title" content="JNV Connect" />
-<meta property="og:description" content="A community platform for Navodaya students to connect and grow together." />
-<meta property="og:image" content="https://jnvconnect.netlify.app/your-social-image.png" />
-<meta property="og:url" content="https://jnvconnect.netlify.app" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="google-site-verification" content="vvJbZrzce_71Qp2HQ1GJ3TxF7X-yxBHd0jOmZcQKaks" />
-    <style>
-        :root {
-            --primary: #ffb3c6;         /* Soft Pink */
---primary-dark: #fc93ad;
-            --error: #ef4444;
-            --success: #10b981;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .login-container {
-            backdrop-filter: blur(16px);
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            width: 100%;
-            max-width: 500px;
-            padding: 40px;
-            position: relative;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .login-container:hover {
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            transform: translateY(-2px);
-        }
-        
-        .logo {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .logo img {
-            height: 60px;
-            margin-bottom: 10px;
-        }
-        
-        .btn-google {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            color: #555;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            padding: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        
-        .btn-google:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-            border-color: #c3cfe2;
-        }
-        
-        .btn-google img {
-            width: 20px;
-            margin-right: 12px;
-        }
-        
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
-            color: #94a3b8;
-            font-size: 14px;
-        }
-        
-        .divider::before, .divider::after {
-            content: "";
-            flex: 1;
-            border-bottom: 1px solid #e2e8f0;
-            margin: 0 10px;
-        }
-        
-        .user-info {
-            text-align: center;
-            margin-top: 20px;
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .user-photo {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-            border: 3px solid white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 30px 0;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top: 4px solid var(--primary);
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        .error-message {
-            color: var(--error);
-            margin: 15px 0;
-            padding: 12px;
-            background: rgba(239, 68, 68, 0.1);
-            border-radius: 8px;
-            text-align: center;
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .success-message {
-            color: var(--success);
-            margin: 15px 0;
-            padding: 12px;
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 8px;
-            text-align: center;
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .btn-signout {
-            margin-top: 20px;
-            padding: 12px 24px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .btn-signout:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
-        }
-        
-        .btn-signout i {
-            margin-right: 8px;
-        }
-        
-        .terms {
-            font-size: 12px;
-            color: #64748b;
-            text-align: center;
-            margin-top: 30px;
-        }
-        
-        .terms a {
-            color: var(--primary);
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        
-        .terms a:hover {
-            text-decoration: underline;
-        }
-        
-        .security-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #64748b;
-        }
-        
-        .security-badge i {
-            margin-right: 5px;
-            color: var(--success);
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 640px) {
-            .login-container {
-                padding: 30px 20px;
-                border-radius: 16px;
-            }
-            
-            .user-photo {
-                width: 80px;
-                height: 80px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JNV Connect — Sign In</title>
+  <meta name="description" content="Sign in to JNVconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <style>
+    body{ font-family:'Poppins',sans-serif; background: linear-gradient(135deg,#f5f7fa,#e4e9f2); min-height:100vh; display:flex; align-items:center; justify-content:center; margin:0; padding:20px; }
+    .card{ background:white; padding:28px; border-radius:16px; box-shadow:0 12px 40px rgba(11,22,38,0.08); width:100%; max-width:520px; text-align:center; }
+    .btn-google{ display:flex; gap:10px; align-items:center; justify-content:center; padding:12px;border-radius:12px;border:1px solid #e6e9ef;background:white; cursor:pointer; font-weight:600; }
+  </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="logo">
-            <img src="img/image.png" alt="Company Logo">
-        </div>
-        
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Welcome Back</h1>
-        <p class="text-center text-gray-600 mb-8">Sign in securely to access your account</p>
-        
-        <div class="login-form">
-            <button id="googleSignIn" class="btn-google">
-                <img src="img/google.png" alt="Google logo">
-                Continue with Google
-            </button>
-            
-            <div class="divider">or</div>
-            
-            <div class="security-badge">
-                <i class="fas fa-shield-alt"></i>
-                <span>Secure authentication powered by Firebase</span>
-            </div>
-            
-            <div class="terms">
-                By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-            </div>
-        </div>
+  <div class="card">
+    <h2>Welcome to JNVconnect</h2>
+    <p>Sign in with Google to continue</p>
+    <button id="googleSignIn" class="btn-google"><i class="fa-brands fa-google"></i> Continue with Google</button>
+  </div>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p class="mt-3 text-gray-600">Authenticating securely...</p>
-        </div>
+<script>
+// Firebase config (same)
+const firebaseConfig = {
+  apiKey: "AIzaSyCtUkAzqn3p63Gx6z2lYjZyX7jjSgwRnGA",
+  authDomain: "blogyash-910d5.firebaseapp.com",
+  projectId: "blogyash-910d5",
+  storageBucket: "blogyash-910d5.appspot.com",
+  messagingSenderId: "648684597318",
+  appId: "1:648684597318:web:d27d634e082696f323da47",
+  measurementId: "G-RCFG8XMMLL"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
-        <div class="error-message" id="error"></div>
-        
-        <div class="success-message" id="success">
-            <i class="fas fa-check-circle"></i> Successfully authenticated! Redirecting...
-        </div>
+document.getElementById('googleSignIn').addEventListener('click', ()=>{
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).then(result=>{
+    const user = result.user;
+    // store minimal user info locally and redirect to home
+    localStorage.setItem('user', user.displayName || user.email || user.uid);
+    window.location.href = 'home.html';
+  }).catch(err=>{
+    alert('Sign in failed: '+ err.message);
+  });
+});
 
-        <div class="user-info" id="userInfo">
-            <img id="userPhoto" class="user-photo" src="" alt="User photo">
-            <h2 id="userName" class="text-2xl font-semibold mt-2"></h2>
-            <p id="userEmail" class="text-gray-600 mt-1"></p>
-            
-            <div class="mt-6">
-                <button id="signOut" class="btn-signout">
-                    <i class="fas fa-sign-out-alt"></i> Sign Out
-                </button>
-            </div>
-            
-            <div class="security-badge mt-6">
-                <i class="fas fa-lock"></i>
-                <span>Secured session</span>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Firebase configuration - Replace with your actual config
-        const firebaseConfig = {
-            apiKey: "AIzaSyCtUkAzqn3p63Gx6z2lYjZyX7jjSgwRnGA",
-            authDomain: "blogyash-910d5.firebaseapp.com",
-            projectId: "blogyash-910d5",
-            storageBucket: "blogyash-910d5.appspot.com",
-            messagingSenderId: "648684597318",
-            appId: "1:648684597318:web:d27d634e082696f323da47",
-            measurementId: "G-RCFG8XMMLL"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        // DOM elements
-        const googleSignInBtn = document.getElementById('googleSignIn');
-        const signOutBtn = document.getElementById('signOut');
-        const userInfoDiv = document.getElementById('userInfo');
-        const loadingDiv = document.getElementById('loading');
-        const errorDiv = document.getElementById('error');
-        const successDiv = document.getElementById('success');
-        const loginForm = document.querySelector('.login-form');
-
-        // List of admin emails (replace with your actual admin emails)
-        const ADMIN_EMAILS = [
-            'yashvardhan4646@gmail.com'
-        ];
-
-        // Function to check if user is admin
-        function isAdmin(user) {
-            return ADMIN_EMAILS.includes(user.email.toLowerCase());
-        }
-
-        // Function to redirect to appropriate page
-        function redirectUser(user) {
-            // Show success message briefly before redirect
-            successDiv.style.display = 'block';
-            
-            // Redirect after 1.5 seconds to allow user to see success message
-            setTimeout(() => {
-                if (isAdmin(user)) {
-                    // Redirect admin to admin page
-                    window.location.href = 'admin.html';
-                    localStorage.setItem('user','admin')
-                } else {
-                    // Redirect regular user to main page
-                    window.location.href = 'admin.html';
-                    localStorage.setItem('user', user.email);
-                }
-            }, 1500);
-        }
-
-        // Google Sign In
-        googleSignInBtn.addEventListener('click', () => {
-            loadingDiv.style.display = 'block';
-            loginForm.style.display = 'none';
-            errorDiv.style.display = 'none';
-            successDiv.style.display = 'none';
-
-            const provider = new firebase.auth.GoogleAuthProvider();
-            provider.addScope('profile');
-            provider.addScope('email');
-            
-            // Additional parameters for better UX
-            provider.setCustomParameters({
-                prompt: 'select_account'
-            });
-            
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    // Successful login
-                    loadingDiv.style.display = 'none';
-                    
-                    // Redirect user to appropriate page
-                    redirectUser(result.user);
-                    
-                    // You could also send the user data to your backend here
-                    // sendUserDataToBackend(result.user);
-                })
-                .catch((error) => {
-                    // Handle Errors here
-                    loadingDiv.style.display = 'none';
-                    loginForm.style.display = 'block';
-                    
-                    let errorMessage = error.message;
-                    
-                    // More specific error handling
-                    switch(error.code) {
-                        case 'auth/popup-closed-by-user':
-                            errorMessage = 'Sign in was cancelled. Please try again.';
-                            break;
-                        case 'auth/cancelled-popup-request':
-                            errorMessage = 'Multiple sign in attempts detected. Please wait a moment.';
-                            break;
-                        case 'auth/account-exists-with-different-credential':
-                            errorMessage = 'This email is already associated with another account.';
-                            break;
-                        case 'auth/network-request-failed':
-                            errorMessage = 'Network error. Please check your internet connection.';
-                            break;
-                        default:
-                            errorMessage = 'An error occurred. Please try again.';
-                    }
-                    
-                    errorDiv.textContent = errorMessage;
-                    errorDiv.style.display = 'block';
-                    
-                    // Auto-hide error after 5 seconds
-                    setTimeout(() => {
-                        errorDiv.style.display = 'none';
-                    }, 5000);
-                });
-        });
-
-        // Sign Out
-        signOutBtn.addEventListener('click', () => {
-            auth.signOut().then(() => {
-                loginForm.style.display = 'block';
-                userInfoDiv.style.display = 'none';
-                
-                // Show a brief success message
-                successDiv.textContent = 'Successfully signed out';
-                successDiv.style.display = 'block';
-                setTimeout(() => {
-                    successDiv.style.display = 'none';
-                }, 2000);
-            }).catch((error) => {
-                errorDiv.textContent = error.message;
-                errorDiv.style.display = 'block';
-            });
-        });
-
-        // Check auth state to redirect logged in users
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // Redirect user to appropriate page
-                redirectUser(user);
-            } else {
-                loginForm.style.display = 'block';
-                userInfoDiv.style.display = 'none';
-            }
-        });
-    </script>
-</body>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "JNV Connect",
-  "url": "https://jnvconnect.netlify.app",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://jnvconnect.netlify.app/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-}
+auth.onAuthStateChanged(user=>{
+  if(user){ localStorage.setItem('user', user.displayName || user.email || user.uid); window.location.href='home.html'; }
+});
 </script>
+</body>
 </html>

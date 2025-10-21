@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JNVconnect — Home</title>
+  <meta name="description" content="JNVconnect — Community for Navodaya students" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg: #0f1724;
+      --panel: #0b1220;
+      --muted: #9aa4b2;
+      --text: #e6eef8;
+      --accent: #5865f2;
+      --accent-2: #4ad7e6;
+      --success: #3ab373;
+      --danger: #e05a79;
+      --glass: rgba(255,255,255,0.04);
+      --radius: 12px;
+      --shadow: 0 8px 30px rgba(2,6,23,0.6);
+    }
+    body.light-theme {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --muted: #64748b;
+      --text: #0b1220;
+      --glass: rgba(11,17,32,0.04);
+      --shadow: 0 6px 18px rgba(16,24,40,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: 'Poppins', Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, var(--bg), #06101b 120%);
+      color:var(--text);
+      overflow:hidden;
+    }
+    .app { display:flex; height:100vh; width:100vw; }
+    .leftbar { width:80px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-right: 1px solid rgba(255,255,255,0.02); display:flex; flex-direction:column; align-items:center; padding:12px 8px; gap:12px; box-shadow: var(--shadow); }
+    .logo { width:54px; height:54px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700; color:var(--text); background: linear-gradient(135deg,var(--accent), var(--accent-2)); cursor:pointer; }
+    .server-btn { width:48px;height:48px;border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text); transition: all .18s ease; background: transparent; border: none; }
+    .server-btn:hover{ transform:translateY(-3px); background:var(--glass); }
+    .server-btn.active{ box-shadow: 0 6px 14px rgba(88,101,242,0.12); background:linear-gradient(180deg, rgba(88,101,242,0.08), rgba(88,101,242,0.03)); }
+    .sidebar { width:300px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border-right:1px solid rgba(255,255,255,0.02); display:flex; flex-direction:column; gap:14px; min-height:100vh; }
+    .brand .title { font-weight:700; letter-spacing:0.2px; font-size:16px; }
+    .channel-list { margin-top:8px; padding:8px; border-radius:10px; display:flex; flex-direction:column; gap:6px; }
+    .channel { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; color:var(--muted); cursor:pointer; transition:all .12s ease; }
+    .channel:hover { background: var(--glass); color:var(--text); }
+    .channel.active { background: linear-gradient(90deg, rgba(88,101,242,0.08), rgba(74,215,230,0.03)); color:var(--text); }
+    .sidebar-bottom { margin-top:auto; display:flex; align-items:center; gap:10px; padding-top:10px; border-top: 1px dashed rgba(255,255,255,0.02); }
+    .profile { display:flex; align-items:center; gap:10px; }
+    .avatar { width:44px; height:44px; border-radius:8px; background:linear-gradient(45deg,#2b3145,#1b2433); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--text); position:relative; }
+    .status-dot { position:absolute; right:2px; bottom:2px; width:12px; height:12px; border-radius:50%; border:2px solid var(--panel); background:var(--success); }
+    .status-dot.idle{ background: #f0b94e; }
+    .status-dot.dnd{ background: var(--danger); }
+    .main { flex:1; display:flex; flex-direction:column; min-height:100vh; overflow:hidden; }
+    .topbar { height:72px; display:flex; align-items:center; gap:12px; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,0.02); }
+    .search { flex:1; max-width:720px; display:flex; align-items:center; gap:10px; padding:8px; background:var(--panel); border-radius:10px; border:1px solid var(--glass); }
+    .search input{ background:transparent; border:0; outline:none; color:var(--text); font-size:14px; width:100%; padding:8px; }
+    .top-actions { display:flex; gap:10px; align-items:center; margin-left:auto; }
+    .btn { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; cursor:pointer; background:var(--glass); color:var(--text); border:1px solid transparent; }
+    .content { display:flex; flex:1; overflow:hidden; }
+    .feed { flex:1; padding:20px; overflow:auto; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.02)); }
+    .right { width:360px; padding:20px; border-left:1px solid rgba(255,255,255,0.02); overflow:auto; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-radius:12px; padding:16px; margin-bottom:14px; border:1px solid var(--glass); box-shadow: var(--shadow); }
+    .message { display:flex; gap:12px; align-items:flex-start; padding:12px; border-radius:10px; transition:all .12s ease; }
+    .message:hover{ background:var(--glass); }
+    .msg-avatar { width:48px;height:48px;border-radius:8px;background:linear-gradient(45deg,#27314a,#111827); display:flex; align-items:center; justify-content:center; font-weight:600; }
+    .msg-content { flex:1; }
+    .msg-header { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+    .author { font-weight:700; color:var(--text); }
+    .meta { color:var(--muted); font-size:12px; }
+    .msg-body { color:var(--text); opacity:0.95; white-space:pre-wrap; line-height:1.5; }
+    .floating { position:fixed; right:26px; bottom:26px; z-index:90; }
+    .fab { background: linear-gradient(90deg,var(--accent), var(--accent-2)); color:white; padding:14px 18px; border-radius:16px; box-shadow: 0 10px 30px rgba(74,117,255,0.14); border:0; cursor:pointer; font-weight:700; }
+    .modal-backdrop { position:fixed; inset:0; background:rgba(2,6,23,0.6); display:none; align-items:center; justify-content:center; z-index:120; }
+    .modal { width:720px; max-width:92%; background:var(--panel); border-radius:12px; border:1px solid var(--glass); padding:18px; box-shadow: 0 30px 60px rgba(2,6,23,0.7); }
+    .form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--glass); background:transparent; color:var(--text); outline:none; }
+    .toasts { position:fixed; right:20px; top:20px; z-index:200; display:flex; flex-direction:column; gap:8px; }
+    .toast { min-width:220px; background:var(--panel); border:1px solid var(--glass); padding:10px 12px; border-radius:10px; color:var(--text); display:flex; gap:8px; align-items:center; box-shadow:var(--shadow); }
+    @media (max-width:900px){ .sidebar{ display:none; } .leftbar{ width:64px; } .topbar { padding:10px; } .right{ display:none; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="leftbar" title="Servers">
+      <div class="logo" id="goHome">J</div>
+      <button class="server-btn active" title="Home" id="serverHome"><i class="fa-solid fa-home"></i></button>
+      <button class="server-btn" title="Feed" id="serverFeed"><i class="fa-solid fa-newspaper"></i></button>
+      <button class="server-btn" title="Users" id="serverUsers"><i class="fa-solid fa-users"></i></button>
+      <div style="flex:1"></div>
+      <button class="server-btn" id="toggleTheme" title="Toggle theme"><i class="fa-solid fa-sun"></i></button>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div>
+          <div class="title">JNVconnect</div>
+          <div style="font-size:12px;color:var(--muted)">Community</div>
+        </div>
+      </div>
+
+      <div class="channel-list" id="channels">
+        <div class="channel active" data-target="postsView"><i class="fa-solid fa-newspaper"></i><span>Feed</span></div>
+        <div class="channel" data-target="eventsView"><i class="fa-solid fa-calendar-days"></i><span>Events</span></div>
+        <div class="channel" data-target="usersView"><i class="fa-solid fa-user"></i><span>Members</span></div>
+        <div class="channel" data-target="aboutView"><i class="fa-solid fa-circle-info"></i><span>About</span></div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="profile">
+          <div class="avatar" id="avatar">YS
+            <div class="status-dot" id="statusDot"></div>
+          </div>
+          <div class="meta">
+            <div class="name" id="profileName">Guest</div>
+            <div class="small">
+              <select id="statusSelect" class="form-control" style="background:transparent; color:var(--muted); border:0; padding:0; outline:none;">
+                <option value="online">Online</option>
+                <option value="idle">Idle</option>
+                <option value="dnd">Do Not Disturb</option>
+                <option value="offline">Offline</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="search" title="Press Ctrl + K to quick search">
+          <i class="fa-solid fa-magnifying-glass" style="color:var(--muted)"></i>
+          <input id="globalSearch" placeholder="Quick search posts, users, events (Ctrl + K)" />
+        </div>
+
+        <div class="top-actions">
+          <button class="btn" id="notifBtn" title="Notifications"><i class="fa-solid fa-bell"></i></button>
+          <button class="btn" id="openNewPost"><i class="fa-solid fa-plus"></i> New</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="feed" id="feed">
+          <div id="postsView" class="view" style="display:block">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px">
+              <h2 style="margin:0">Community Feed</h2>
+              <div style="display:flex; gap:8px; align-items:center">
+                <input id="searchPosts" class="form-control" placeholder="Search posts by title or tag" style="width:300px" />
+                <select id="filterStatus" class="form-control" style="width:160px">
+                  <option value="all">All statuses</option>
+                  <option value="published">Published</option>
+                  <option value="draft">Draft</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="postsList" class="card">
+              <div class="empty-state" id="loadingPosts" style="text-align:center; color:var(--muted)">
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading posts...
+              </div>
+            </div>
+          </div>
+
+          <div id="eventsView" class="view" style="display:none">
+            <h2>Events & Announcements</h2>
+            <div id="eventsList" class="card">
+              <div style="color:var(--muted)">Loading events...</div>
+            </div>
+          </div>
+
+          <div id="usersView" class="view" style="display:none">
+            <h2>Members</h2>
+            <div id="usersList" class="card">
+              <div style="color:var(--muted)">Loading users...</div>
+            </div>
+          </div>
+
+          <div id="aboutView" class="view" style="display:none">
+            <div class="card">
+              <h3>About JNVconnect</h3>
+              <p>JNVconnect is a student-made community for Navodaya students. Share posts, join events, and connect with peers.</p>
+            </div>
+          </div>
+        </section>
+
+        <aside class="right">
+          <div class="card">
+            <h3>Upcoming Events</h3>
+            <div id="miniEvents">Loading...</div>
+          </div>
+
+          <div class="card">
+            <h3>Notifications</h3>
+            <div id="miniNotifs">No new notifications</div>
+          </div>
+
+          <div class="card">
+            <h3>Active Members</h3>
+            <div id="activeMembers">Loading...</div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="floating">
+        <button class="fab" id="fabNew"><i class="fa-solid fa-pen-to-square"></i> Create</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- New Post Modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" id="newPostModal">
+      <h2>Create Post</h2>
+      <form id="postForm">
+        <div class="row">
+          <input id="postTitle" class="form-control" placeholder="Title (required)" required />
+        </div>
+        <div class="row">
+          <textarea id="postContent" class="form-control" placeholder="Write your content..." rows="6" required></textarea>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="postStatus" class="form-control" style="width:160px">
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
+          </select>
+          <input id="postTags" class="form-control" placeholder="tags, comma separated" />
+          <input id="postImage" class="form-control" placeholder="Image URL (optional)" />
+          <label style="display:flex; align-items:center; gap:8px; color:var(--muted)">
+            <input type="checkbox" id="featuredPost"> Featured
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn" id="cancelNewPost">Cancel</button>
+          <button type="submit" class="btn" style="background:var(--accent); color:white;">Publish</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+<script>
+// Firebase config (kept same)
+const firebaseConfig = {
+  apiKey: "AIzaSyCtUkAzqn3p63Gx6z2lYjZyX7jjSgwRnGA",
+  authDomain: "blogyash-910d5.firebaseapp.com",
+  databaseURL: "https://blogyash-910d5-default-rtdb.firebaseio.com",
+  projectId: "blogyash-910d5",
+  storageBucket: "blogyash-910d5.appspot.com",
+  messagingSenderId: "648684597318",
+  appId: "1:648684597318:web:d27d634e082696f323da47",
+  measurementId: "G-RCFG8XMMLL"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const postsRef = database.ref('posts');
+const usersRef = database.ref('users');
+const eventsRef = database.ref('events');
+
+// UI refs
+const channelEls = document.querySelectorAll('.channel');
+const views = document.querySelectorAll('.view');
+const postsListEl = document.getElementById('postsList');
+const eventsListEl = document.getElementById('eventsList');
+const usersListEl = document.getElementById('usersList');
+const miniEvents = document.getElementById('miniEvents');
+const miniNotifs = document.getElementById('miniNotifs');
+const activeMembers = document.getElementById('activeMembers');
+
+const modalBackdrop = document.getElementById('modalBackdrop');
+const postForm = document.getElementById('postForm');
+const openNewPost = document.getElementById('openNewPost');
+const fabNew = document.getElementById('fabNew');
+const cancelNewPost = document.getElementById('cancelNewPost');
+const searchPosts = document.getElementById('searchPosts');
+const filterStatus = document.getElementById('filterStatus');
+const globalSearch = document.getElementById('globalSearch');
+const toggleTheme = document.getElementById('toggleTheme');
+const statusSelect = document.getElementById('statusSelect');
+const statusDot = document.getElementById('statusDot');
+const profileName = document.getElementById('profileName');
+
+let postsData = {}, usersData = {}, eventsData = {};
+
+// Theme
+function applyTheme(t){ if(t==='light'){ document.body.classList.add('light-theme'); toggleTheme.innerHTML = '<i class=\"fa-solid fa-moon\"></i>'; } else { document.body.classList.remove('light-theme'); toggleTheme.innerHTML = '<i class=\"fa-solid fa-sun\"></i>'; } localStorage.setItem('theme', t); }
+applyTheme(localStorage.getItem('theme') || 'dark');
+toggleTheme.addEventListener('click', ()=>{ applyTheme(document.body.classList.contains('light-theme') ? 'dark' : 'light'); showToast('Theme switched'); });
+
+// Presence: keep in sync with local selection and Firebase users node
+function applyLocalStatus(s){ statusSelect.value = s; statusDot.className = 'status-dot ' + (s==='idle' ? 'idle' : s==='dnd' ? 'dnd' : ''); if(s==='offline') statusDot.style.opacity='0.5'; else statusDot.style.opacity='1'; localStorage.setItem('status', s); updatePresenceInFirebase(s); }
+applyLocalStatus(localStorage.getItem('status') || 'online');
+statusSelect.addEventListener('change', (e)=>{ applyLocalStatus(e.target.value); showToast('Status: '+e.target.value); });
+
+// Update presence in Firebase with onDisconnect
+function updatePresenceInFirebase(status){
+  const uid = localStorage.getItem('user') || ('guest_'+Math.floor(Math.random()*10000));
+  localStorage.setItem('user', uid);
+  const userRef = usersRef.child(uid);
+  userRef.set({ name: profileName.innerText || uid, status: status, lastSeen: new Date().toISOString() });
+  userRef.onDisconnect().update({ status: 'offline', lastSeen: new Date().toISOString() });
+}
+
+// Channels navigation
+channelEls.forEach(ch=> ch.addEventListener('click', ()=>{ channelEls.forEach(c=>c.classList.remove('active')); ch.classList.add('active'); const target=ch.getAttribute('data-target'); views.forEach(v=> v.style.display = v.id===target ? 'block' : 'none'); }));
+
+// Modal
+function openModal(){ modalBackdrop.style.display='flex'; setTimeout(()=> modalBackdrop.style.opacity=1,10); }
+function closeModal(){ modalBackdrop.style.opacity=0; setTimeout(()=> modalBackdrop.style.display='none',200); postForm.reset(); document.getElementById('postStatus').value='published'; postForm.onsubmit=null; }
+openNewPost.addEventListener('click', openModal); fabNew.addEventListener('click', openModal); cancelNewPost.addEventListener('click', closeModal);
+modalBackdrop.addEventListener('click', (e)=>{ if(e.target===modalBackdrop) closeModal(); });
+
+// Toasts
+const toasts = document.getElementById('toasts');
+function showToast(msg, time=3500){ const t=document.createElement('div'); t.className='toast'; t.innerHTML=`<i class="fa-solid fa-bell"></i><div style="flex:1">${msg}</div><button class="btn" style="padding:6px 8px">OK</button>`; toasts.appendChild(t); t.querySelector('button').addEventListener('click', ()=> t.remove()); setTimeout(()=> t.remove(), time); }
+
+// Quick search (Ctrl+K)
+document.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); globalSearch.focus(); globalSearch.select(); } });
+
+// Render posts
+function renderPosts(posts){ postsData = posts||{}; const keys=Object.keys(postsData||{}); if(keys.length===0){ postsListEl.innerHTML='<div style=\"text-align:center;color:var(--muted)\">No posts yet — be the first!</div>'; updateStats(); return; } let html=''; keys.reverse().forEach(id=>{ const p=postsData[id]; const date=new Date(p.createdAt||new Date()).toLocaleString(); const author=p.user||'Anonymous'; const avatar=(author||'U').slice(0,2).toUpperCase(); const tags=(p.tags||[]).map(t=>`<span style=\"color:var(--muted);font-size:12px;margin-right:6px\">#${t}</span>`).join(''); const imgHtml=p.imageUrl?`<div style=\"margin-top:8px\"><img src=\"${p.imageUrl}\" style=\"max-width:220px;border-radius:8px;display:block\"/></div>`:''; html+=`<div class=\"message card\" data-id=\"${id}\"><div class=\"msg-avatar\">${avatar}</div><div class=\"msg-content\"><div class=\"msg-header\"><div class=\"author\">${escapeHtml(author)}</div><div class=\"meta\"> · ${date} · <span style=\"color:var(--muted)\">${p.status}</span></div></div><div style=\"display:flex;align-items:center;justify-content:space-between;gap:12px\"><div style=\"flex:1\"><div style=\"font-weight:700;font-size:15px;margin-bottom:6px\">${escapeHtml(p.title||'(no title)')}</div><div class=\"msg-body\">${escapeHtml(p.content||'')}</div>${imgHtml}<div style=\"margin-top:8px\">${tags}</div></div><div style=\"display:flex;flex-direction:column;gap:8px;margin-left:12px\"><button class=\"btn edit-btn\" data-id=\"${id}\"><i class=\"fa-solid fa-pen\"></i></button><button class=\"btn del-btn\" data-id=\"${id}\" style=\"background:transparent;color:var(--danger)\"><i class=\"fa-solid fa-trash\"></i></button></div></div></div></div>`; }); postsListEl.innerHTML=html; attachPostListeners(); updateStats(); }
+function attachPostListeners(){ document.querySelectorAll('.edit-btn').forEach(b=> b.addEventListener('click', e=> openEditPost(e.currentTarget.dataset.id))); document.querySelectorAll('.del-btn').forEach(b=> b.addEventListener('click', e=> confirmDelete(e.currentTarget.dataset.id))); }
+function updateStats(){ const all=Object.values(postsData||{}); document.getElementById('statTotalPosts')?.innerText = all.length; document.getElementById('statPublished')?.innerText = all.filter(p=>p.status==='published').length; document.getElementById('statDrafts')?.innerText = all.filter(p=>p.status==='draft').length; }
+function escapeHtml(s){
+  if (s === undefined || s === null) return '';
+  return String(s)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;')
+    .replaceAll('\n', '<br>');
+}
+
+// Firebase listeners
+postsRef.on('value', snap=> renderPosts(snap.val()), err=> showToast('Failed to load posts'));
+
+eventsRef.on('value', snap=>{ eventsData = snap.val()||{}; renderEvents(eventsData); }, err=> console.error(err));
+
+usersRef.on('value', snap=>{ usersData = snap.val()||{}; renderUsers(usersData); }, err=> console.error(err));
+
+function renderEvents(events){ const keys=Object.keys(events||{}); if(keys.length===0){ eventsListEl.innerHTML='<div style=\"color:var(--muted)\">No upcoming events.</div>'; miniEvents.innerHTML='—'; return; } let html=''; keys.reverse().forEach(k=>{ const e=events[k]; html+=`<div style=\"padding:8px;border-radius:8px;background:var(--glass);margin-bottom:8px\"><div style=\"font-weight:700\">${escapeHtml(e.title)}</div><div style=\"color:var(--muted);font-size:13px\">${escapeHtml(e.date||'')}</div><div style=\"margin-top:6px\">${escapeHtml(e.description||'')}</div></div>`; }); eventsListEl.innerHTML=html; miniEvents.innerHTML = Object.keys(events).slice(-3).reverse().map(k=>{ const e=events[k]; return `<div style=\"padding:6px 0;border-bottom:1px dashed rgba(255,255,255,0.02)\"><strong>${escapeHtml(e.title)}</strong><div style=\"color:var(--muted);font-size:12px\">${escapeHtml(e.date||'')}</div></div>`; }).join(''); }
+
+function renderUsers(list){ const u=list||{}; if(Object.keys(u).length===0){ usersListEl.innerHTML='<div style=\"color:var(--muted)\">No members yet.</div>'; activeMembers.innerHTML='—'; return; } let html=''; let activeHtml=''; Object.keys(u).forEach(k=>{ const user=u[k]; html+=`<div style=\"display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;background:var(--glass);margin-bottom:8px\"><div style=\"width:40px;height:40px;border-radius:8px;background:linear-gradient(45deg,#222,#111);display:flex;align-items:center;justify-content:center\">${(user.name||'U').slice(0,2).toUpperCase()}</div><div><div style=\"font-weight:700\">${escapeHtml(user.name||k)}</div><div style=\"color:var(--muted);font-size:12px\">${escapeHtml(user.status||'offline')}</div></div></div>`; if(user.status && user.status!=='offline') activeHtml+=`<div style=\"display:flex;gap:8px;align-items:center;margin-bottom:6px\"><div style=\"width:10px;height:10px;border-radius:50%;background:${user.status==='idle'?'#f0b94e':user.status==='dnd'?'var(--danger)':'var(--success)'}\"></div><div style=\"font-size:13px\">${escapeHtml(user.name||k)}</div></div>`; }); usersListEl.innerHTML=html; activeMembers.innerHTML = activeHtml || '<div style=\"color:var(--muted)\">No active members</div>'; }
+
+// Create / update posts
+postForm.addEventListener('submit', async (e)=>{ e.preventDefault(); const title = document.getElementById('postTitle').value.trim(); const content = document.getElementById('postContent').value.trim(); const status = document.getElementById('postStatus').value; const tags = document.getElementById('postTags').value.split(',').map(t=>t.trim()).filter(Boolean); const imageUrl = document.getElementById('postImage').value.trim() || null; if(!title||!content){ showToast('Please fill required fields'); return; } const postData = { user: localStorage.getItem('user') || 'guest', title, content, status, tags, imageUrl, featured: document.getElementById('featuredPost').checked||false, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() }; try{ const newRef = postsRef.push(); await newRef.set({...postData,id:newRef.key}); showToast('Post published'); closeModal(); }catch(err){ console.error(err); showToast('Failed to publish'); } });
+
+function openEditPost(id){ const p=postsData[id]; if(!p){ showToast('Post not found'); return; } document.getElementById('postTitle').value = p.title; document.getElementById('postContent').value = p.content; document.getElementById('postStatus').value = p.status; document.getElementById('postTags').value = (p.tags||[]).join(', '); document.getElementById('postImage').value = p.imageUrl||''; document.getElementById('featuredPost').checked = !!p.featured; openModal(); postForm.onsubmit = async (ev)=>{ ev.preventDefault(); const title2=document.getElementById('postTitle').value.trim(); const content2=document.getElementById('postContent').value.trim(); const status2=document.getElementById('postStatus').value; const tags2=document.getElementById('postTags').value.split(',').map(t=>t.trim()).filter(Boolean); const image2=document.getElementById('postImage').value.trim()||null; if(!title2||!content2){ showToast('Please fill fields'); return; } try{ await postsRef.child(id).update({ title:title2, content:content2, status:status2, tags:tags2, imageUrl:image2, featured:document.getElementById('featuredPost').checked, updatedAt:new Date().toISOString() }); showToast('Post updated'); postForm.onsubmit=null; closeModal(); }catch(err){ console.error(err); showToast('Update failed'); } }; }
+
+function confirmDelete(id){ if(!confirm('Delete this post?')) return; postsRef.child(id).remove().then(()=> showToast('Post deleted')).catch(err=>{ console.error(err); showToast('Delete failed'); }); }
+
+// Search & filter
+searchPosts.addEventListener('input', (e)=>{ const q=e.target.value.toLowerCase().trim(); if(!q){ renderPosts(postsData); return; } const filtered={}; Object.keys(postsData||{}).forEach(k=>{ const p=postsData[k]; if((p.title||'').toLowerCase().includes(q) || (p.content||'').toLowerCase().includes(q) || (p.tags||[]).join(',').toLowerCase().includes(q)) filtered[k]=p; }); renderPosts(filtered); });
+filterStatus.addEventListener('change', (e)=>{ const val=e.target.value; if(val==='all'){ renderPosts(postsData); return; } const filtered={}; Object.keys(postsData||{}).forEach(k=>{ if(postsData[k].status===val) filtered[k]=postsData[k]; }); renderPosts(filtered); });
+
+// Notifications button
+document.getElementById('notifBtn').addEventListener('click', ()=> showToast('No new notifications'));
+
+// Settings save (site title)
+document.getElementById('saveSettings')?.addEventListener('click', ()=>{ const t=document.getElementById('siteTitle').value.trim()||'JNVconnect'; document.querySelector('.brand .title')&&(document.querySelector('.brand .title').innerText=t); showToast('Settings saved'); });
+
+// Keyboard & init
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeModal(); postForm.onsubmit=null; } });
+document.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); globalSearch.focus(); globalSearch.select(); } });
+
+setTimeout(()=> showToast('Welcome to JNVconnect — community feed (Ctrl+K to search)'), 800);
+
+// Ensure a user id exists
+if(!localStorage.getItem('user')){ const anon='guest_'+Math.floor(Math.random()*10000); localStorage.setItem('user', anon); profileName.innerText = anon; } else { profileName.innerText = localStorage.getItem('user'); }
+
+// Initial presence update
+updatePresenceInFirebase(localStorage.getItem('status')||'online');
+
+
+</script>
+</body>
+</html>
