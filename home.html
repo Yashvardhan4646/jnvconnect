@@ -1240,18 +1240,20 @@
         
 
         function getFormData() {
-            return {
-                user: localStorage.getItem('user'),
-                title: document.getElementById('postTitle').value.trim(),
-                content: document.getElementById('postContent').value.trim(),
-                status: document.getElementById('postStatus').value,
-                tags: document.getElementById('postTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
-                featured: document.getElementById('featuredPost').checked,
-                imageUrl: document.getElementById('postImage').value.trim() || null,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
-        }
+    const postImageEl = document.getElementById('postImage');
+    return {
+        user: localStorage.getItem('user'),
+        title: document.getElementById('postTitle').value.trim(),
+        content: document.getElementById('postContent').value.trim(),
+        status: document.getElementById('postStatus').value,
+        tags: document.getElementById('postTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+        featured: document.getElementById('featuredPost').checked,
+        imageUrl: postImageEl ? postImageEl.value.trim() : null, // safely check
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+}
+
 
         async function submitPost(postData, successMessage) {
             const submitBtn = document.getElementById('submitPostBtn');
