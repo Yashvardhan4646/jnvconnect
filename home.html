@@ -698,6 +698,76 @@
         .required {
             color: var(--danger);
         }
+        .about {
+  padding: 40px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  margin-left: 250px;
+  background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  color: var(--dark);
+  text-align: center;
+  transition: all 0.5s ease-in-out;
+}
+
+.about i {
+  font-size: 80px;
+  color: var(--primary);
+  margin-bottom: 15px;
+}
+
+.about h2 {
+  font-size: 2.5rem;
+  margin-bottom: 5px;
+}
+
+.about h4 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.about p {
+  max-width: 700px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.about .socials a {
+  display: inline-block;
+  margin: 5px 10px;
+  text-decoration: none;
+  color: var(--dark);
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.about .socials a:hover {
+  color: var(--primary);
+}
+
+.about button {
+  padding: 15px 30px;
+  border-radius: 30px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.about button:hover {
+  background: var(--secondary);
+  transform: scale(1.05);
+}
+
     </style>
 </head>
 <body>
@@ -774,14 +844,25 @@
                 }
             }
         </style>
-        <div class="abbb">
-            <div class="about" style="align-self: center;">
-            <i class="fa-solid fa-user"></i>
-            <h2>Yashvardhan</h2>
-            <p>Hey there! I'm Yash, also known as BugFreeYash 🐞, a 17-year-old frontend developer from Padha, Karnal. I'm currently studying in 12th standard at Jawahar Navodaya Vidyalaya, Panipat. I love building clean, responsive UI using HTML, CSS, and JavaScript, and I enjoy sharing my projects and learning journey online. Whether it's a fun new website, a sleek component, or a creative idea, I’m always experimenting and trying to improve. You can check out my work at bugfreeyash.netlify.app or follow me on Instagram and Threads @bugfreeyash. Let’s build something cool together! 🚀</p>
-            <button onclick="window.location.href='https://yashvardhansharma.netlify.app'">Go To Portfolio</button>
-        </div>
-        </div>
+       <div class="abbb">
+  <div class="about">
+    <i class="fa-solid fa-user-astronaut"></i>
+    <h2>Yashvardhan Sharma</h2>
+    <h4>Frontend Developer & Student</h4>
+    <p>
+      Hello! I'm Yash, 17, a passionate frontend developer from Karnal. I love creating 
+      clean, responsive websites and sharing my learning journey. I’m currently in 12th standard at 
+      Jawahar Navodaya Vidyalaya, Panipat. My skills: HTML, CSS, JavaScript, and building creative UI.
+    </p>
+    <div class="socials">
+      <a href="https://bugfreeyash.netlify.app" target="_blank"><i class="fas fa-globe"></i> Portfolio</a>
+      <a href="https://instagram.com/bugfreeyash" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+      <a href="https://threads.net/@bugfreeyash" target="_blank"><i class="fab fa-twitter"></i> Threads</a>
+    </div>
+    <button onclick="window.location.href='https://yashvardhansharma.netlify.app'">See Full Portfolio</button>
+  </div>
+</div>
+
         
 
         <!-- Main Content -->
